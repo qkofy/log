@@ -116,7 +116,10 @@ func (lgr *Logger) Configure(cfg *Config) *Logger {
 		lgr.filename = "./runtime.log"
 	}
 
-	file := writer(lgr.filename)
+	var file *os.File
+	if cfg.Out == 8 || cfg.Out == 10 || cfg.Out == 12 || cfg.Out == 14 {
+		file = writer(lgr.filename)
+	}
 
 	if cfg.Out > 0 {
 		lgr.out    = ioutil.Discard
