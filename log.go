@@ -177,7 +177,7 @@ func (lgr *Logger) caller(skip int) string {
 
 	if lgr.flag >= 8 && lgr.flag <= 15 {
 		return tmp
-	} else if lgr.flag >= 16 && lgr.flag <= 25 {
+	} else if lgr.flag >= 16 && lgr.flag <= 23 {
 		return path.Base(tmp)
 	}
 
@@ -197,6 +197,8 @@ func (lgr *Logger) echo(i ...interface{}) {
 		}, "")
 	}
 
+	flag := lgr.flag
+
 	var (
 		loc string
 		arr []interface{}
@@ -206,14 +208,26 @@ func (lgr *Logger) echo(i ...interface{}) {
 		for i := 3; i <= lgr.depth; i++ {
 			loc = loc + lgr.caller(i) + ": "
 		}
+	} else {
+		if lgr.flag >= 8 && lgr.flag <= 15 {
+			flag = lgr.flag ^ LongFile
+		} else if lgr.flag >= 16 && lgr.flag <= 23 {
+			flag = lgr.flag ^ ShortFile
+		}
 
+		if lgr.flag >= 8 && lgr.flag <= 23 {
+			loc = loc + lgr.caller(lgr.depth) + ": "
+		}
+	}
+
+	if loc != "" {
 		arr = append(arr, strings.TrimRight(loc, " "))
 	}
 
 	//arr = append(arr, lgr.prefix)
 	arr = append(arr, i...)
 
-	stdLog := log.New(lgr.out, lgr.prefix, lgr.flag)
+	stdLog := log.New(lgr.out, lgr.prefix, flag)
 
 	if lgr.format != "" {
 		stdLog.Printf(loc + lgr.format, i...)
