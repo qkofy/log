@@ -175,6 +175,10 @@ func (lgr *Logger) Format(s string) *Logger {
 func (lgr *Logger) caller(skip int) string {
 	tmp := caller(skip)
 
+	if strings.Contains(tmp, "/Go/src/") {
+		return ""
+	}
+
 	if lgr.flag >= 8 && lgr.flag <= 15 {
 		return tmp
 	} else if lgr.flag >= 16 && lgr.flag <= 23 {
@@ -204,9 +208,19 @@ func (lgr *Logger) echo(i ...interface{}) {
 		arr []interface{}
 	)
 
+	clr := func(str string, skip int) string {
+		tmp := lgr.caller(skip)
+
+		if tmp != "" && !strings.Contains(str, tmp) {
+			return str + tmp + ": "
+		}
+
+		return str
+	}
+
 	if lgr.traceback {
-		for i := 3; i <= lgr.depth; i++ {
-			loc = loc + lgr.caller(i) + ": "
+		for i := 3; i <= lgr.depth + 5; i++ {
+			loc = clr(loc, i)
 		}
 	} else {
 		if lgr.flag >= 8 && lgr.flag <= 15 {
@@ -216,7 +230,15 @@ func (lgr *Logger) echo(i ...interface{}) {
 		}
 
 		if lgr.flag >= 8 && lgr.flag <= 23 {
-			loc = loc + lgr.caller(lgr.depth) + ": "
+			i := lgr.depth
+
+			if lgr.format == "" || lgr.depth == 5 {
+				i = lgr.depth + 1
+			}
+
+			for ; i <= lgr.depth + 5; i++ {
+				loc = clr(loc, i)
+			}
 		}
 	}
 

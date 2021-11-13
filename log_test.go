@@ -16,6 +16,11 @@ func TestLogger_Configure(t *testing.T) {
 func TestLogger_Print(t *testing.T) {
 	lgr.Print("Logger Print")
 	lgr.Format("%s").Print("Logger Format Print")
+	fmt.Println(lgr)
+	lgr.Configure(&Config{Traceback: true})
+	lgr.Print("Logger Traceback Print")
+	lgr.Format("%s").Print("Logger Traceback Format Print")
+	fmt.Println(lgr)
 }
 
 func TestLogger_Trace(t *testing.T) {
@@ -73,6 +78,11 @@ func TestConfigure(t *testing.T) {
 func TestPrint(t *testing.T) {
 	Print("Log Print")
 	Format("%s").Print("Log Format Print")
+	fmt.Println(std)
+	Configure(&Config{Traceback: true})
+	Print("Log Traceback Print")
+	Format("%s").Print("Log Traceback Format Print")
+	fmt.Println(std)
 }
 
 func TestTrace(t *testing.T) {
