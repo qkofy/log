@@ -212,7 +212,11 @@ func (lgr *Logger) echo(i ...interface{}) {
 		tmp := lgr.caller(skip)
 
 		if tmp != "" && !strings.Contains(str, tmp) {
-			return str + tmp + ": "
+			if lgr.traceback {
+				return str + tmp + ": "
+			}
+
+			return tmp + ": "
 		}
 
 		return str
